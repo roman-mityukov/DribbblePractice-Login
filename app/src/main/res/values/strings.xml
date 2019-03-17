@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">DribbleLogin</string>
+    <string name="logo_transition_name">logoTransitionName</string>
+</resources>
