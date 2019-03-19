@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.rm.dribble.login.R
-import io.rm.dribble.login.home.HomeFragment
 import kotlinx.android.synthetic.main.login_fragment.*
 
 class LoginFragment : Fragment(), LoginPresenterOutput {
@@ -33,6 +32,7 @@ class LoginFragment : Fragment(), LoginPresenterOutput {
         this.presenterInput.attachOutput(this)
 
         this.button.setOnClickListener {
+            this.button.startAnimation()
             this.presenterInput.doLoginJob()
         }
     }
@@ -47,7 +47,9 @@ class LoginFragment : Fragment(), LoginPresenterOutput {
             return
         }
 
-        val homeFragment = HomeFragment()
+
+
+        /*val homeFragment = HomeFragment()
 
         val enterTransitionSet = TransitionSet()
         enterTransitionSet.addTransition(LogoTransition())
@@ -61,7 +63,7 @@ class LoginFragment : Fragment(), LoginPresenterOutput {
             )
             .replace(R.id.fragmentContainer, homeFragment, HomeFragment.TAG)
             .addToBackStack(null)
-            .commit()
+            .commit()*/
     }
 
     override fun onError(e: Throwable) {
