@@ -5,7 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.Button
@@ -26,19 +26,7 @@ class CircularProgressButton @JvmOverloads constructor(
             ContextCompat.getDrawable(this.context, R.drawable.circular_progress_button_background)
     }
 
-    private val progressDrawable = CircularProgressDrawable(
-        ContextCompat.getColor(
-            this@CircularProgressButton.context,
-            android.R.color.white
-        ),
-        20f,
-        8f
-    )
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-        //this.progressDrawable.draw(canvas)
-    }
+    private lateinit var progressDrawable: CircularProgressDrawable
 
     fun startAnimation() {
         this.text = null
@@ -53,24 +41,26 @@ class CircularProgressButton @JvmOverloads constructor(
         widthAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
-                this@CircularProgressButton.setCompoundDrawablesWithIntrinsicBounds(
-                    this@CircularProgressButton.progressDrawable, null, null, null
-                )
+                with(this@CircularProgressButton) {
+                    progressDrawable = CircularProgressDrawable(
+                        androidx.core.content.ContextCompat.getColor(
+                            context,
+                            android.R.color.white
+                        ),
+                        height / 2f,
+                        4f
+                    )
 
-                val padding =
-                    (this@CircularProgressButton.width - this@CircularProgressButton.progressDrawable.intrinsicWidth) / 2
+                    val progressDrawableBounds =
+                        Rect(0, 0, width - 0, height - 0)
+                    progressDrawable.bounds = progressDrawableBounds
+                    progressDrawable.callback = this
+                    progressDrawable.start()
 
-                this@CircularProgressButton.setPadding(padding, 0, 0, 0)
-
-                val offset = 0
-                val left = offset + padding
-                val right = this@CircularProgressButton.width - offset - padding
-                val bottom = this@CircularProgressButton.height - padding
-                val top = padding
-
-                this@CircularProgressButton.progressDrawable.setBounds(left, top, right, bottom)
-                this@CircularProgressButton.progressDrawable.callback = this@CircularProgressButton
-                this@CircularProgressButton.progressDrawable.start()
+                    setCompoundDrawablesWithIntrinsicBounds(
+                        progressDrawable, null, null, null
+                    )
+                }
             }
         })
 

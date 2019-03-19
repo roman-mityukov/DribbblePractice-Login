@@ -21,7 +21,7 @@ class CircularProgressDrawable(
 
     companion object {
         private val ANGLE_INTERPOLATOR = LinearInterpolator()
-        private const val ANGLE_ANIMATOR_DURATION = 2000L
+        private const val ANGLE_ANIMATOR_DURATION = 1000L
     }
 
     var angle: Float = 0f
@@ -31,6 +31,7 @@ class CircularProgressDrawable(
         }
     private val paint = Paint()
     private val myBounds = RectF()
+    private var myBoundsOffset: Float = 0f
     private val angleAnimator = ObjectAnimator.ofFloat(this, "angle", 360f)
 
     init {
@@ -47,23 +48,24 @@ class CircularProgressDrawable(
 
     override fun draw(canvas: Canvas) {
         canvas.drawArc(this.myBounds, this.angle, 45f, false, this.paint)
-        //canvas.drawCircle(0f, 0f, this.radius, this.paint)
     }
 
     override fun getIntrinsicHeight(): Int {
-        return 140
+        return this.bounds.width()
     }
 
     override fun getIntrinsicWidth(): Int {
-        return 140
+        return this.bounds.height()
     }
 
     override fun onBoundsChange(bounds: Rect) {
         super.onBoundsChange(bounds)
-        this.myBounds.left = bounds.left.toFloat()
-        this.myBounds.right = bounds.right.toFloat()
-        this.myBounds.top = bounds.top.toFloat()
-        this.myBounds.bottom = bounds.bottom.toFloat()
+        this.myBoundsOffset = this.borderWidth * 4
+        this.myBounds.left = bounds.left.toFloat() + this.myBoundsOffset
+        this.myBounds.right = bounds.right.toFloat() - this.myBoundsOffset
+        this.myBounds.top = bounds.top.toFloat() + this.myBoundsOffset
+        this.myBounds.bottom = bounds.bottom.toFloat() - this.myBoundsOffset
+
     }
 
     override fun setAlpha(alpha: Int) {
