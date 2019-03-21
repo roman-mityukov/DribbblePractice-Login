@@ -58,6 +58,10 @@ class LoginFragment : Fragment(), LoginPresenterOutput {
 
         this.requireActivity().supportFragmentManager.beginTransaction()
             .addSharedElement(
+                this.button,
+                this.getString(R.string.button_transition_name)
+            )
+            .addSharedElement(
                 this.logo,
                 this.getString(R.string.logo_transition_name)
             )
