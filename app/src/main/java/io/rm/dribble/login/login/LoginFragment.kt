@@ -1,11 +1,11 @@
 package io.rm.dribble.login.login
 
+import android.animation.Animator
 import android.os.Bundle
-import android.transition.ChangeBounds
-import android.transition.TransitionSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import androidx.fragment.app.Fragment
 import io.rm.dribble.login.R
 import io.rm.dribble.login.home.HomeFragment
@@ -49,34 +49,39 @@ class LoginFragment : Fragment(), LoginPresenterOutput {
             return
         }
 
-        val homeFragment = HomeFragment()
+        this.button.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
 
-        val enterTransitionSet = TransitionSet()
-        enterTransitionSet.addTransition(LogoTransition())
-        enterTransitionSet.duration = 300
-        homeFragment.sharedElementEnterTransition = enterTransitionSet
+        val viewPropertyAnimator =
+            this.button.animate().y(800f).scaleX(30f).scaleY(30f).setInterpolator(DecelerateInterpolator(1f))
+        viewPropertyAnimator.duration = 800
+        viewPropertyAnimator.setListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) {
 
-        this.requireActivity().supportFragmentManager.beginTransaction()
-            .addSharedElement(
-                this.button,
-                this.getString(R.string.button_transition_name)
-            )
-            .addSharedElement(
-                this.logo,
-                this.getString(R.string.logo_transition_name)
-            )
-            .replace(R.id.fragmentContainer, homeFragment, HomeFragment.TAG)
-            .addToBackStack(null)
-            .commit()
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                //Thread.sleep(300)
+                val homeFragment = HomeFragment()
+
+                this@LoginFragment.requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, homeFragment, HomeFragment.TAG)
+                    .addToBackStack(null)
+                    .commit()
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+
+            }
+
+            override fun onAnimationRepeat(animation: Animator?) {
+
+            }
+        })
+
+
     }
 
     override fun onError(e: Throwable) {
         e.printStackTrace()
-    }
-}
-
-class LogoTransition : TransitionSet() {
-    init {
-        addTransition(ChangeBounds())
     }
 }

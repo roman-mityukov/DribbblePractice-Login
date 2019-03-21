@@ -44,7 +44,7 @@ class LoginPresenter : LoginPresenterInput, CoroutineScope {
         if (!this.isBusy) {
             this.isBusy = true
             this.job = launch {
-                delay(1000)
+                delay(1500)
 
                 withContext(Dispatchers.Main) {
                     this@LoginPresenter.isBusy = false
