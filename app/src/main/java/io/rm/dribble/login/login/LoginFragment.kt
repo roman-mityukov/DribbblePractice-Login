@@ -60,7 +60,7 @@ class LoginFragment : Fragment(), LoginPresenterOutput {
             }
 
             override fun onAnimationEnd(animation: Animator?) {
-                //Thread.sleep(300)
+                Thread.sleep(300)
                 val homeFragment = HomeFragment()
 
                 this@LoginFragment.requireActivity().supportFragmentManager.beginTransaction()
