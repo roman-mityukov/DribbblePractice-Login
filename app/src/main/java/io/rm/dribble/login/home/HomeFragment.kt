@@ -33,8 +33,8 @@ class HomeFragment : Fragment() {
 
         val oldY = this.button.y
 
-        this.button.scaleX = 30f
-        this.button.scaleY = 30f
+        this.button.scaleX = 35f
+        this.button.scaleY = 35f
         this.button.y = 800f
 
         val startAlpha = 0f
