@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import androidx.core.animation.addListener
 import androidx.fragment.app.Fragment
 import io.rm.dribble.login.R
 import kotlinx.android.synthetic.main.home_fragment.*
@@ -18,70 +19,57 @@ class HomeFragment : Fragment() {
         val TAG: String = HomeFragment::class.java.simpleName
     }
 
+    private lateinit var buttonAnimatorSet: AnimatorSet
+    private lateinit var viewsAnimatorSet: AnimatorSet
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.home_fragment, container, false)
-
-        return view
+        return inflater.inflate(R.layout.home_fragment, container, false)
     }
 
     override fun onResume() {
         super.onResume()
 
-        val oldY = this.button.y
-
         this.button.scaleX = 35f
         this.button.scaleY = 35f
         this.button.y = 800f
 
-        val startAlpha = 0f
-        val endAlpha = 1f
+        val listAnimatedElements = listOf<View>(this.logo, this.logo2, this.logo3, this.logo4)
+        listAnimatedElements.forEach { it.alpha = 0f }
 
-        this@HomeFragment.logo.alpha = startAlpha
-        this@HomeFragment.logo2.alpha = startAlpha
-        this@HomeFragment.logo3.alpha = startAlpha
-        this@HomeFragment.logo4.alpha = startAlpha
+        this.buttonAnimatorSet = AnimatorSet()
+        this.buttonAnimatorSet.playTogether(
+            arrayListOf(
+                ObjectAnimator.ofFloat(this.button, View.Y, 1600f),
+                ObjectAnimator.ofFloat(this.button, View.SCALE_X, 1f),
+                ObjectAnimator.ofFloat(this.button, View.SCALE_Y, 1f)
+            ) as Collection<Animator>
+        )
+        this.buttonAnimatorSet.interpolator = DecelerateInterpolator()
+        this.buttonAnimatorSet.duration = 500L
+        this.buttonAnimatorSet.start()
 
-        val viewPropertyAnimator =
-            this.button.animate().y(1600f).scaleX(1f).scaleY(1f)
-                .setInterpolator(DecelerateInterpolator(1f))
-        viewPropertyAnimator.duration = 500
-        viewPropertyAnimator.setListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator?) {
+        this.buttonAnimatorSet.addListener(onEnd = {
+            this@HomeFragment.button.setImageResource(R.drawable.ic_add)
 
-            }
-
-            override fun onAnimationEnd(animation: Animator?) {
-                this@HomeFragment.button.setImageResource(R.drawable.ic_add)
-
-                val alphaDuration = 100L
-
-                val a1 = ObjectAnimator.ofFloat(this@HomeFragment.logo, View.ALPHA, endAlpha)
-                a1.duration = alphaDuration
-                val a2 = ObjectAnimator.ofFloat(this@HomeFragment.logo2, View.ALPHA, endAlpha)
-                a2.duration = alphaDuration
-                val a3 = ObjectAnimator.ofFloat(this@HomeFragment.logo3, View.ALPHA, endAlpha)
-                a3.duration = alphaDuration
-                val a4 = ObjectAnimator.ofFloat(this@HomeFragment.logo4, View.ALPHA, endAlpha)
-                a4.duration = alphaDuration
-
-                val animatorSet = AnimatorSet()
-                animatorSet.playSequentially(
-                    a1, a2, a3, a4
-                )
-                animatorSet.start()
-            }
-
-            override fun onAnimationCancel(animation: Animator?) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator?) {
-
-            }
+            this@HomeFragment.viewsAnimatorSet = AnimatorSet()
+            this@HomeFragment.viewsAnimatorSet.playSequentially(listAnimatedElements.map {
+                ObjectAnimator.ofFloat(it, View.ALPHA, 1f)
+            })
+            this@HomeFragment.viewsAnimatorSet.duration = 100L
+            this@HomeFragment.viewsAnimatorSet.start()
         })
+    }
+
+    override fun onStop() {
+        super.onStop()
+        this.buttonAnimatorSet.cancel()
+
+        if (this::viewsAnimatorSet.isInitialized) {
+            this.viewsAnimatorSet.cancel()
+        }
     }
 }
